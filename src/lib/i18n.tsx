@@ -33,6 +33,8 @@ const dict = {
     consumable: 'Consumable', asset: 'Reusable asset',
     enterPin: 'Enter the admin PIN to switch to this role', wrongPin: 'Wrong PIN.', changePin: 'Change admin PIN',
     newPin: 'New PIN', currentPin: 'Current PIN', pinChanged: 'PIN updated.',
+    printCountSheet: 'Print count sheet', checkedBy: 'Checked by', pickCategoryFirst: 'Choose a specific category above first.',
+    countSheetHint: 'Write the counted quantity in each date column by hand — no need to reprint between checks.',
   },
   ar: {
     appName: 'دل باستا', appSub: 'العمليات والمخزون',
@@ -63,6 +65,8 @@ const dict = {
     consumable: 'مستهلك', asset: 'أصل قابل لإعادة الاستخدام',
     enterPin: 'أدخل رمز المدير للتبديل لهذا الدور', wrongPin: 'رمز خاطئ.', changePin: 'تغيير رمز المدير',
     newPin: 'الرمز الجديد', currentPin: 'الرمز الحالي', pinChanged: 'تم تحديث الرمز.',
+    printCountSheet: 'طباعة ورقة الجرد', checkedBy: 'تم الفحص بواسطة', pickCategoryFirst: 'اختاري فئة محددة فوق أولاً.',
+    countSheetHint: 'اكتبي الكمية المعدودة يدويًا في كل عمود تاريخ — بدون حاجة لإعادة الطباعة بين كل فحص.',
   },
   sw: {
     appName: 'Del Pasta', appSub: 'Uendeshaji na Hesabu',
@@ -93,6 +97,8 @@ const dict = {
     consumable: 'Inayotumika', asset: 'Kifaa cha kurudiwa',
     enterPin: 'Weka PIN ya msimamizi kubadili hadhi hii', wrongPin: 'PIN si sahihi.', changePin: 'Badilisha PIN ya msimamizi',
     newPin: 'PIN mpya', currentPin: 'PIN ya sasa', pinChanged: 'PIN imesasishwa.',
+    printCountSheet: 'Chapisha karatasi ya hesabu', checkedBy: 'Imekaguliwa na', pickCategoryFirst: 'Chagua aina mahususi juu kwanza.',
+    countSheetHint: 'Andika kiasi kilichohesabiwa kwa mkono kwenye kila safu ya tarehe — hauitaji kuchapisha upya kila ukaguzi.',
   },
 } as const
 

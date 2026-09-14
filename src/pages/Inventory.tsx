@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
+import { Plus, Edit2, Trash2, Printer } from 'lucide-react'
 import { useI18n, pickField, type Lang, type TKey } from '@/lib/i18n'
 import { useRole } from '@/lib/role'
 import { canDo, type InventoryItem, type InventoryTransaction, type Category, type TxnType } from '@/lib/types'
@@ -9,6 +9,7 @@ import { Button, Card, Drawer, Modal, Field, Input, Select, Textarea, Pill, Empt
 import LangTabs from '@/components/LangTabs'
 import PhotoUpload from '@/components/PhotoUpload'
 import Media from '@/components/Media'
+import { printStockCountSheet } from '@/lib/print'
 
 const TXN_TYPES: TxnType[] = ['in', 'out', 'waste', 'damaged', 'adjustment', 'returned', 'expired']
 const TXN_LABEL: Record<TxnType, TKey> = { in: 'stockIn', out: 'stockOut', waste: 'waste', damaged: 'damaged', adjustment: 'adjustment', returned: 'returned', expired: 'expiredTx' }
@@ -98,6 +99,15 @@ export default function Inventory() {
           <option value="all">{t('all')} {t('category')}</option>
           {cats.filter((c) => c.kind !== 'asset').map((c) => <option key={c.id} value={c.id}>{pickField(c, 'name', lang)}</option>)}
         </Select>
+        <Button
+          onClick={() => {
+            if (catFilter === 'all') { alert(t('pickCategoryFirst')); return }
+            const cat = cats.find((c) => c.id === catFilter)
+            printStockCountSheet(filtered, cat ? pickField(cat, 'name', lang) : catFilter, lang, t)
+          }}
+        >
+          <Printer size={15} /> {t('printCountSheet')}
+        </Button>
         <div className="flex-1" />
         {canDo(role, 'editInventory') && (
           <Button variant="primary" onClick={() => { setEditing(blankItem()); setLangTab('en') }}><Plus size={15} /> {t('newItem')}</Button>
