@@ -3,7 +3,7 @@ import { Plus } from 'lucide-react'
 import { useI18n, pickField, type Lang } from '@/lib/i18n'
 import { useRole } from '@/lib/role'
 import { canDo, type Category } from '@/lib/types'
-import { listCategories, addCategory } from '@/lib/db'
+import { listCategories, addCategory, verifyAdminPin, setAdminPin } from '@/lib/db'
 import { Card, Button, Modal, Field, Input, Select, EmptyState } from '@/components/ui'
 import LangTabs from '@/components/LangTabs'
 
@@ -33,6 +33,15 @@ export default function Settings() {
         </Card>
       </div>
 
+      {role === 'admin' && (
+        <div>
+          <h2 className="font-bold text-sm mb-2">{t('changePin')}</h2>
+          <Card className="p-4 max-w-sm">
+            <PinChangeForm t={t} />
+          </Card>
+        </div>
+      )}
+
       <div>
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-bold text-sm">{t('category')}</h2>
@@ -51,6 +60,39 @@ export default function Settings() {
       <Modal open={adding} onClose={() => setAdding(false)} title={t('add')}>
         <CategoryForm onDone={() => { setAdding(false); load() }} onCancel={() => setAdding(false)} t={t} />
       </Modal>
+    </div>
+  )
+}
+
+function PinChangeForm({ t }: { t: (k: any) => string }) {
+  const [current, setCurrent] = useState('')
+  const [next, setNext] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
+
+  const submit = async () => {
+    setMsg(null)
+    if (!next.trim()) return
+    setSaving(true)
+    try {
+      const ok = await verifyAdminPin(current)
+      if (!ok) { setMsg({ ok: false, text: t('wrongPin') }); return }
+      await setAdminPin(next.trim())
+      setCurrent(''); setNext('')
+      setMsg({ ok: true, text: t('pinChanged') })
+    } catch {
+      setMsg({ ok: false, text: t('wrongPin') })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div>
+      <Field label={t('currentPin')}><Input type="password" inputMode="numeric" value={current} onChange={(e) => setCurrent(e.target.value)} /></Field>
+      <Field label={t('newPin')}><Input type="password" inputMode="numeric" value={next} onChange={(e) => setNext(e.target.value)} /></Field>
+      {msg && <p className={`text-xs mb-2 ${msg.ok ? 'text-success' : 'text-destructive'}`}>{msg.text}</p>}
+      <Button variant="primary" size="sm" disabled={saving} onClick={submit}>{t('save')}</Button>
     </div>
   )
 }

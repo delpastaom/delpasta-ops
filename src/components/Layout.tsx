@@ -4,6 +4,8 @@ import { LayoutDashboard, Package, BookOpen, BarChart3, Settings, Globe, ShieldC
 import { useI18n } from '@/lib/i18n'
 import { useRole } from '@/lib/role'
 import type { Role } from '@/lib/types'
+import { verifyAdminPin } from '@/lib/db'
+import { isSupabaseConfigured } from '@/lib/supabase'
 
 const NAV = [
   { to: '/', icon: LayoutDashboard, label: 'nav_dashboard' as const, end: true },
@@ -23,6 +25,16 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { role, setRole } = useRole()
   const location = useLocation()
   const titleKey = currentTitleKey(location.pathname)
+
+  const handleRoleChange = async (next: Role) => {
+    if ((next === 'admin' || next === 'manager') && isSupabaseConfigured()) {
+      const pin = window.prompt(t('enterPin'))
+      if (pin === null) return
+      const ok = await verifyAdminPin(pin).catch(() => false)
+      if (!ok) { window.alert(t('wrongPin')); return }
+    }
+    setRole(next)
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -66,7 +78,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <ShieldCheck size={13} className="opacity-70" />
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value as Role)}
+              onChange={(e) => handleRoleChange(e.target.value as Role)}
               className="bg-transparent flex-1 outline-none text-xs"
             >
               <option value="admin" className="text-black">{t('admin')}</option>

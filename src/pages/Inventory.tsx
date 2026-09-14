@@ -49,7 +49,14 @@ export default function Inventory() {
 
   useEffect(() => {
     if (detail) listTransactions(detail.id).then(setTxns).catch(() => setTxns([]))
-  }, [detail])
+  }, [detail?.id])
+
+  // Keep the open detail drawer in sync with the latest fetched quantity
+  // (recording a transaction reloads `items`, not `detail`, so without this
+  // the drawer kept showing the pre-transaction quantity).
+  useEffect(() => {
+    setDetail((prev) => (prev ? items.find((i) => i.id === prev.id) ?? prev : prev))
+  }, [items])
 
   const catName = (id: string | null) => {
     const c = cats.find((c) => c.id === id)

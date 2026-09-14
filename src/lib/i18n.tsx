@@ -31,6 +31,8 @@ const dict = {
     costCalcNote: 'Calculated live from current inventory cost.', active: 'Active', inactive: 'Inactive',
     dbNotConfigured: 'Supabase is not configured yet — set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env',
     consumable: 'Consumable', asset: 'Reusable asset',
+    enterPin: 'Enter the admin PIN to switch to this role', wrongPin: 'Wrong PIN.', changePin: 'Change admin PIN',
+    newPin: 'New PIN', currentPin: 'Current PIN', pinChanged: 'PIN updated.',
   },
   ar: {
     appName: 'دل باستا', appSub: 'العمليات والمخزون',
@@ -59,6 +61,8 @@ const dict = {
     costCalcNote: 'تُحسب مباشرة من تكلفة المخزون الحالية.', active: 'نشط', inactive: 'غير نشط',
     dbNotConfigured: 'لم يتم إعداد Supabase بعد — أضف VITE_SUPABASE_URL و VITE_SUPABASE_ANON_KEY في ملف .env',
     consumable: 'مستهلك', asset: 'أصل قابل لإعادة الاستخدام',
+    enterPin: 'أدخل رمز المدير للتبديل لهذا الدور', wrongPin: 'رمز خاطئ.', changePin: 'تغيير رمز المدير',
+    newPin: 'الرمز الجديد', currentPin: 'الرمز الحالي', pinChanged: 'تم تحديث الرمز.',
   },
   sw: {
     appName: 'Del Pasta', appSub: 'Uendeshaji na Hesabu',
@@ -87,6 +91,8 @@ const dict = {
     costCalcNote: 'Inahesabiwa moja kwa moja kutoka gharama ya sasa.', active: 'Inatumika', inactive: 'Haitumiki',
     dbNotConfigured: 'Supabase haijasanidiwa bado — weka VITE_SUPABASE_URL na VITE_SUPABASE_ANON_KEY kwenye .env',
     consumable: 'Inayotumika', asset: 'Kifaa cha kurudiwa',
+    enterPin: 'Weka PIN ya msimamizi kubadili hadhi hii', wrongPin: 'PIN si sahihi.', changePin: 'Badilisha PIN ya msimamizi',
+    newPin: 'PIN mpya', currentPin: 'PIN ya sasa', pinChanged: 'PIN imesasishwa.',
   },
 } as const
 

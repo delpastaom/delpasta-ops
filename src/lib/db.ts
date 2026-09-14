@@ -146,6 +146,19 @@ export async function uploadPhoto(file: File, folder: string): Promise<string> {
   return data.publicUrl
 }
 
+// ============================= Settings (admin PIN) =============================
+export async function verifyAdminPin(pin: string): Promise<boolean> {
+  const client = sb()
+  const { data } = await client.from('app_settings').select('value').eq('key', 'admin_pin').maybeSingle()
+  const stored = data?.value || '1234'
+  return stored === pin
+}
+export async function setAdminPin(newPin: string): Promise<void> {
+  const client = sb()
+  const { error } = await client.from('app_settings').upsert({ key: 'admin_pin', value: newPin })
+  if (error) throw error
+}
+
 // ============================= Audit =============================
 export async function logAudit(userName: string, role: string, action: string, target: string, details = '') {
   const client = getSupabase()
