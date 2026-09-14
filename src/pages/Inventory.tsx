@@ -8,6 +8,7 @@ import { invStatus, fmt1, money } from '@/lib/status'
 import { Button, Card, Drawer, Modal, Field, Input, Select, Textarea, Pill, EmptyState } from '@/components/ui'
 import LangTabs from '@/components/LangTabs'
 import PhotoUpload from '@/components/PhotoUpload'
+import Media from '@/components/Media'
 
 const TXN_TYPES: TxnType[] = ['in', 'out', 'waste', 'damaged', 'adjustment', 'returned', 'expired']
 const TXN_LABEL: Record<TxnType, TKey> = { in: 'stockIn', out: 'stockOut', waste: 'waste', damaged: 'damaged', adjustment: 'adjustment', returned: 'returned', expired: 'expiredTx' }
@@ -104,9 +105,7 @@ export default function Inventory() {
             const s = invStatus(it)
             return (
               <Card key={it.id} className="p-3 cursor-pointer hover:border-primary/40" onClick={() => setDetail(it)}>
-                <div className="aspect-[3/2] rounded-lg bg-muted mb-2.5 overflow-hidden grid place-items-center">
-                  {it.photo_url ? <img src={it.photo_url} className="w-full h-full object-cover" /> : <span className="text-3xl opacity-30">🧺</span>}
-                </div>
+                <Media photoUrl={it.photo_url} icon={it.icon} className="aspect-[3/2] rounded-lg mb-2.5 overflow-hidden flex items-center justify-center" />
                 <div className="font-bold text-sm truncate">{pickField(it, 'name', lang)}</div>
                 <div className="text-xs text-muted-foreground truncate mb-2">{catName(it.category_id)}</div>
                 <div className="flex items-center justify-between">
@@ -123,9 +122,7 @@ export default function Inventory() {
       <Drawer open={!!detail} onClose={() => setDetail(null)} title={detail ? pickField(detail, 'name', lang) : ''}>
         {detail && (
           <div>
-            <div className="aspect-[16/9] rounded-xl bg-muted mb-4 overflow-hidden grid place-items-center">
-              {detail.photo_url ? <img src={detail.photo_url} className="w-full h-full object-cover" /> : <span className="text-4xl opacity-30">🧺</span>}
-            </div>
+            <Media photoUrl={detail.photo_url} icon={detail.icon} className="aspect-[16/9] rounded-xl mb-4 overflow-hidden flex items-center justify-center" />
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs bg-muted rounded-full px-2.5 py-1 font-semibold">{catName(detail.category_id)}</span>
               {(() => { const s = invStatus(detail); return <Pill tone={s === 'ok' ? 'good' : s === 'low' ? 'warn' : 'critical'}>{t(s === 'ok' ? 'inStock' : s === 'low' ? 'lowStock' : s === 'critical' ? 'critical' : 'outOfStock')}</Pill> })()}

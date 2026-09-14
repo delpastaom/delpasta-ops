@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { NavLink } from 'react-router'
+import { NavLink, useLocation } from 'react-router'
 import { LayoutDashboard, Package, BookOpen, BarChart3, Settings, Globe, ShieldCheck } from 'lucide-react'
 import { useI18n } from '@/lib/i18n'
 import { useRole } from '@/lib/role'
@@ -13,9 +13,16 @@ const NAV = [
   { to: '/settings', icon: Settings, label: 'nav_settings' as const },
 ]
 
+function currentTitleKey(pathname: string): (typeof NAV)[number]['label'] {
+  const match = [...NAV].sort((a, b) => b.to.length - a.to.length).find((n) => pathname === n.to || (n.to !== '/' && pathname.startsWith(n.to)))
+  return match?.label ?? 'nav_dashboard'
+}
+
 export default function Layout({ children }: { children: ReactNode }) {
   const { t, lang, setLang } = useI18n()
   const { role, setRole } = useRole()
+  const location = useLocation()
+  const titleKey = currentTitleKey(location.pathname)
 
   return (
     <div className="min-h-screen flex">
@@ -72,6 +79,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex-1 min-w-0 flex flex-col">
+        <div className="sticky top-0 z-30 bg-background/90 backdrop-blur border-b border-border">
+          <div className="max-w-6xl w-full mx-auto px-4 md:px-6 py-4">
+            <h1 className="font-display text-xl md:text-2xl font-semibold">{t(titleKey)}</h1>
+          </div>
+        </div>
         <main className="flex-1 p-4 md:p-6 max-w-6xl w-full mx-auto pb-20 md:pb-6">{children}</main>
       </div>
 

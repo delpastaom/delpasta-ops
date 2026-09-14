@@ -9,6 +9,7 @@ import { isSupabaseConfigured } from '@/lib/supabase'
 import { Button, Card, Drawer, Modal, Field, Input, Select, Textarea, Pill, Tabs, EmptyState } from '@/components/ui'
 import LangTabs from '@/components/LangTabs'
 import PhotoUpload from '@/components/PhotoUpload'
+import Media from '@/components/Media'
 
 const ICONS = ['default', 'cheese', 'onion', 'pastry', 'samosa', 'oil', 'spice', 'starch', 'packaging', 'tray', 'meat', 'veg']
 
@@ -118,9 +119,7 @@ export default function Recipes() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {recipes.map((r) => (
             <Card key={r.id} className="p-3 cursor-pointer hover:border-primary/40" onClick={() => setDetailId(r.id)}>
-              <div className="aspect-[3/2] rounded-lg bg-muted mb-2.5 overflow-hidden grid place-items-center">
-                {r.photo_url ? <img src={r.photo_url} className="w-full h-full object-cover" /> : <span className="text-3xl opacity-30">🥟</span>}
-              </div>
+              <Media photoUrl={r.photo_url} icon="samosa" className="aspect-[3/2] rounded-lg mb-2.5 overflow-hidden flex items-center justify-center" />
               <div className="font-bold text-sm truncate">{pickField(r, 'name', lang)}</div>
               <div className="text-xs text-muted-foreground truncate mb-2">{r.category}</div>
               <StatusPill status={r.status} t={t} />
@@ -253,9 +252,7 @@ function RecipeDetailView({ recipe, items, lang, t, role, scaleQty, setScaleQty,
 
   return (
     <div>
-      <div className="aspect-[16/9] rounded-xl bg-muted mb-4 overflow-hidden grid place-items-center">
-        {recipe.photo_url ? <img src={recipe.photo_url} className="w-full h-full object-cover" /> : <span className="text-4xl opacity-30">🥟</span>}
-      </div>
+      <Media photoUrl={recipe.photo_url} icon="samosa" className="aspect-[16/9] rounded-xl mb-4 overflow-hidden flex items-center justify-center" />
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs bg-muted rounded-full px-2.5 py-1 font-semibold">{recipe.category}</span>
         <StatusPill status={recipe.status} t={t} />
@@ -341,9 +338,7 @@ function RecipeDetailView({ recipe, items, lang, t, role, scaleQty, setScaleQty,
           {recipe.recipe_steps.map((s, idx) => (
             <div key={s.id} className="flex gap-3 border border-border rounded-xl p-3.5">
               <div className="w-8 h-8 rounded-full bg-foreground text-background grid place-items-center font-bold text-sm flex-none">{idx + 1}</div>
-              <div className="w-20 h-20 rounded-lg bg-muted overflow-hidden grid place-items-center flex-none">
-                {s.photo_url ? <img src={s.photo_url} className="w-full h-full object-cover" /> : <span className="text-2xl opacity-30">🍳</span>}
-              </div>
+              <Media photoUrl={s.photo_url} icon={s.icon} className="w-20 h-20 rounded-lg overflow-hidden flex items-center justify-center flex-none" />
               <div className="min-w-0 flex-1">
                 <div className="font-bold text-sm mb-0.5">{pickField(s, 'short', lang)}</div>
                 <div className="text-xs text-muted-foreground mb-1.5">{pickField(s, 'detailed', lang)}</div>
