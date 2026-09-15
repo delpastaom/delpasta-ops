@@ -39,6 +39,11 @@ const dict = {
     totalOwned: 'Total owned', available: 'Available', damagedQty: 'Damaged', missingQty: 'Missing', condition: 'Condition',
     cond_new: 'New', cond_excellent: 'Excellent', cond_good: 'Good', cond_usable: 'Usable', cond_damaged: 'Damaged',
     cond_needs_repair: 'Needs repair', cond_unusable: 'Unusable', noAssetsYet: 'No buffet equipment yet.',
+    nav_events: 'Buffet Planning', newEvent: 'New event', eventName: 'Event name', eventDate: 'Event date',
+    guestCount: 'Number of guests', dishes: 'Dishes', dishName: 'Dish', plateCount: 'Plates', decoration: 'Decoration',
+    addDish: 'Add dish', addEquipmentLine: 'Add equipment', pickRecipeOptional: 'Pick a recipe (optional)',
+    autoCalcPerGuest: 'Auto-calc per guest', perGuestMultiplier: 'Per guest ×', noEventsYet: 'No events yet.',
+    decorationNotes: 'Flowers / decoration used', dishCategory: 'Category (e.g. Main, Appetizer)',
   },
   ar: {
     appName: 'دل باستا', appSub: 'العمليات والمخزون',
@@ -75,6 +80,11 @@ const dict = {
     totalOwned: 'الإجمالي المملوك', available: 'المتاح', damagedQty: 'تالف', missingQty: 'مفقود', condition: 'الحالة',
     cond_new: 'جديد', cond_excellent: 'ممتاز', cond_good: 'جيد', cond_usable: 'قابل للاستخدام', cond_damaged: 'تالف',
     cond_needs_repair: 'يحتاج إصلاح', cond_unusable: 'غير صالح', noAssetsYet: 'لا توجد معدات بوفيه بعد.',
+    nav_events: 'تخطيط البوفيه', newEvent: 'فعالية جديدة', eventName: 'اسم الفعالية', eventDate: 'تاريخ الفعالية',
+    guestCount: 'عدد الأشخاص', dishes: 'الأصناف', dishName: 'الصنف', plateCount: 'عدد الصحون', decoration: 'الزينة',
+    addDish: 'إضافة صنف', addEquipmentLine: 'إضافة معدة', pickRecipeOptional: 'اختاري وصفة (اختياري)',
+    autoCalcPerGuest: 'حساب تلقائي حسب عدد الأشخاص', perGuestMultiplier: 'لكل شخص ×', noEventsYet: 'لا توجد فعاليات بعد.',
+    decorationNotes: 'نوع الورد / الزينة المستخدمة', dishCategory: 'الفئة (مثل: رئيسي، خفايف)',
   },
   sw: {
     appName: 'Del Pasta', appSub: 'Uendeshaji na Hesabu',
@@ -111,6 +121,11 @@ const dict = {
     totalOwned: 'Jumla inayomilikiwa', available: 'Ipo', damagedQty: 'Imeharibika', missingQty: 'Imepotea', condition: 'Hali',
     cond_new: 'Mpya', cond_excellent: 'Bora sana', cond_good: 'Nzuri', cond_usable: 'Inatumika', cond_damaged: 'Imeharibika',
     cond_needs_repair: 'Inahitaji ukarabati', cond_unusable: 'Haitumiki', noAssetsYet: 'Hakuna vifaa vya tafrija bado.',
+    nav_events: 'Mipango ya Tafrija', newEvent: 'Tafrija mpya', eventName: 'Jina la tafrija', eventDate: 'Tarehe ya tafrija',
+    guestCount: 'Idadi ya wageni', dishes: 'Vyakula', dishName: 'Chakula', plateCount: 'Sahani', decoration: 'Mapambo',
+    addDish: 'Ongeza chakula', addEquipmentLine: 'Ongeza kifaa', pickRecipeOptional: 'Chagua mapishi (hiari)',
+    autoCalcPerGuest: 'Hesabu kiotomatiki kwa mgeni', perGuestMultiplier: 'Kwa mgeni ×', noEventsYet: 'Hakuna tafrija bado.',
+    decorationNotes: 'Maua / mapambo yaliyotumika', dishCategory: 'Aina (mfano: Kikuu, Kitafunio)',
   },
 } as const
 

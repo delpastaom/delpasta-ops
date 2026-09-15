@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router'
-import { LayoutDashboard, Package, UtensilsCrossed, BookOpen, BarChart3, Settings, Globe, ShieldCheck } from 'lucide-react'
+import { LayoutDashboard, Package, UtensilsCrossed, BookOpen, BarChart3, Settings, Globe, ShieldCheck, PartyPopper } from 'lucide-react'
 import { useI18n } from '@/lib/i18n'
 import { useRole } from '@/lib/role'
 import type { Role } from '@/lib/types'
@@ -12,6 +12,7 @@ const NAV = [
   { to: '/inventory', icon: Package, label: 'nav_inventory' as const },
   { to: '/assets', icon: UtensilsCrossed, label: 'nav_assets' as const },
   { to: '/recipes', icon: BookOpen, label: 'nav_recipes' as const },
+  { to: '/events', icon: PartyPopper, label: 'nav_events' as const },
   { to: '/reports', icon: BarChart3, label: 'nav_reports' as const },
   { to: '/settings', icon: Settings, label: 'nav_settings' as const },
 ]

@@ -2,6 +2,7 @@ import { getSupabase } from './supabase'
 import type {
   Category, InventoryItem, InventoryTransaction, Recipe, RecipeFull,
   RecipeEquipment, RecipeIngredient, RecipeStep, RecipeQcCheckpoint, TxnType, AssetItem,
+  BuffetEvent, BuffetEventFull, BuffetEventDish, BuffetEventEquipment,
 } from './types'
 
 function sb() {
@@ -163,6 +164,64 @@ export async function updateAsset(id: string, item: Partial<AssetItem>) {
 }
 export async function deleteAsset(id: string) {
   const { error } = await sb().from('asset_items').delete().eq('id', id)
+  if (error) throw error
+}
+
+// ============================= Buffet events =============================
+const EVENT_SELECT = '*, buffet_event_dishes(*), buffet_event_equipment(*)'
+
+export async function listEvents(): Promise<BuffetEvent[]> {
+  const { data, error } = await sb().from('buffet_events').select('*').order('event_date', { ascending: false })
+  if (error) throw error
+  return data as BuffetEvent[]
+}
+export async function getEvent(id: string): Promise<BuffetEventFull | null> {
+  const { data, error } = await sb().from('buffet_events').select(EVENT_SELECT).eq('id', id).maybeSingle()
+  if (error) throw error
+  if (!data) return null
+  const ev = data as unknown as BuffetEventFull
+  ev.buffet_event_dishes.sort((a, b) => a.sort_order - b.sort_order)
+  ev.buffet_event_equipment.sort((a, b) => a.sort_order - b.sort_order)
+  return ev
+}
+
+export type EventSaveInput = Partial<BuffetEvent> & {
+  id?: string
+  dishes: Omit<BuffetEventDish, 'id' | 'event_id'>[]
+  equipment: Omit<BuffetEventEquipment, 'id' | 'event_id'>[]
+}
+
+export async function saveEvent(input: EventSaveInput): Promise<string> {
+  const { dishes, equipment, id, ...fields } = input
+  const client = sb()
+  let eventId = id
+
+  if (eventId) {
+    const { error } = await client.from('buffet_events').update(fields).eq('id', eventId)
+    if (error) throw error
+  } else {
+    const { data, error } = await client.from('buffet_events').insert(fields).select('id').single()
+    if (error) throw error
+    eventId = (data as { id: string }).id
+  }
+
+  await client.from('buffet_event_dishes').delete().eq('event_id', eventId)
+  if (dishes.length) {
+    const { error } = await client.from('buffet_event_dishes').insert(dishes.map((d, i) => ({ ...d, event_id: eventId, sort_order: i })))
+    if (error) throw error
+  }
+
+  await client.from('buffet_event_equipment').delete().eq('event_id', eventId)
+  if (equipment.length) {
+    const { error } = await client.from('buffet_event_equipment').insert(equipment.map((e, i) => ({ ...e, event_id: eventId, sort_order: i })))
+    if (error) throw error
+  }
+
+  return eventId!
+}
+
+export async function deleteEvent(id: string) {
+  const { error } = await sb().from('buffet_events').delete().eq('id', id)
   if (error) throw error
 }
 

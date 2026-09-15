@@ -121,16 +121,50 @@ export type AssetItem = {
   created_at: string
 }
 
+export type BuffetEvent = {
+  id: string
+  name: string
+  event_date: string | null
+  guest_count: number
+  decoration_notes: string
+  notes: string
+  created_at: string
+}
+
+export type BuffetEventDish = {
+  id: string; event_id: string
+  recipe_id: string | null
+  dish_name: string
+  category: string
+  plate_count: number
+  notes: string
+  sort_order: number
+}
+
+export type BuffetEventEquipment = {
+  id: string; event_id: string
+  asset_item_id: string | null
+  per_guest_multiplier: number | null
+  qty: number
+  sort_order: number
+}
+
+export type BuffetEventFull = BuffetEvent & {
+  buffet_event_dishes: BuffetEventDish[]
+  buffet_event_equipment: BuffetEventEquipment[]
+}
+
 export type Role = 'admin' | 'manager' | 'staff' | 'viewer'
 
 export function canDo(role: Role, action:
-  'editInventory' | 'recordTxn' | 'editRecipe' | 'manageCategories' | 'editAssets'): boolean {
+  'editInventory' | 'recordTxn' | 'editRecipe' | 'manageCategories' | 'editAssets' | 'editEvents'): boolean {
   const map: Record<string, Role[]> = {
     editInventory: ['admin', 'manager'],
     recordTxn: ['admin', 'manager', 'staff'],
     editRecipe: ['admin', 'manager'],
     manageCategories: ['admin', 'manager'],
     editAssets: ['admin', 'manager'],
+    editEvents: ['admin', 'manager', 'staff'],
   }
   return (map[action] || []).includes(role)
 }

@@ -7,6 +7,7 @@ import Layout from '@/components/Layout'
 import Dashboard from '@/pages/Dashboard'
 import Inventory from '@/pages/Inventory'
 import Assets from '@/pages/Assets'
+import Events from '@/pages/Events'
 import Recipes from '@/pages/Recipes'
 import Reports from '@/pages/Reports'
 import Settings from '@/pages/Settings'
@@ -34,6 +35,7 @@ function AppRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/assets" element={<Assets />} />
+        <Route path="/events" element={<Events />} />
         <Route path="/recipes" element={<Recipes />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
