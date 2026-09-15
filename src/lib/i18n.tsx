@@ -44,6 +44,8 @@ const dict = {
     addDish: 'Add dish', addEquipmentLine: 'Add equipment', pickRecipeOptional: 'Pick a recipe (optional)',
     autoCalcPerGuest: 'Auto-calc per guest', perGuestMultiplier: 'Per guest ×', noEventsYet: 'No events yet.',
     decorationNotes: 'Flowers / decoration used', dishCategory: 'Category (e.g. Main, Appetizer)',
+    menuTemplates: 'Menu templates', newTemplate: 'New template', templateName: 'Template name',
+    loadTemplate: 'Load a menu template', noTemplatesYet: 'No menu templates yet.',
   },
   ar: {
     appName: 'دل باستا', appSub: 'العمليات والمخزون',
@@ -85,6 +87,8 @@ const dict = {
     addDish: 'إضافة صنف', addEquipmentLine: 'إضافة معدة', pickRecipeOptional: 'اختاري وصفة (اختياري)',
     autoCalcPerGuest: 'حساب تلقائي حسب عدد الأشخاص', perGuestMultiplier: 'لكل شخص ×', noEventsYet: 'لا توجد فعاليات بعد.',
     decorationNotes: 'نوع الورد / الزينة المستخدمة', dishCategory: 'الفئة (مثل: رئيسي، خفايف)',
+    menuTemplates: 'قوائم الأصناف الثابتة', newTemplate: 'قائمة جديدة', templateName: 'اسم القائمة',
+    loadTemplate: 'تحميل قائمة جاهزة', noTemplatesYet: 'لا توجد قوائم ثابتة بعد.',
   },
   sw: {
     appName: 'Del Pasta', appSub: 'Uendeshaji na Hesabu',
@@ -126,6 +130,8 @@ const dict = {
     addDish: 'Ongeza chakula', addEquipmentLine: 'Ongeza kifaa', pickRecipeOptional: 'Chagua mapishi (hiari)',
     autoCalcPerGuest: 'Hesabu kiotomatiki kwa mgeni', perGuestMultiplier: 'Kwa mgeni ×', noEventsYet: 'Hakuna tafrija bado.',
     decorationNotes: 'Maua / mapambo yaliyotumika', dishCategory: 'Aina (mfano: Kikuu, Kitafunio)',
+    menuTemplates: 'Orodha za mapishi za kudumu', newTemplate: 'Orodha mpya', templateName: 'Jina la orodha',
+    loadTemplate: 'Pakia orodha tayari', noTemplatesYet: 'Hakuna orodha za kudumu bado.',
   },
 } as const
 

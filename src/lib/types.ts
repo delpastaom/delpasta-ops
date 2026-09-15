@@ -154,10 +154,29 @@ export type BuffetEventFull = BuffetEvent & {
   buffet_event_equipment: BuffetEventEquipment[]
 }
 
+export type MenuTemplate = {
+  id: string
+  name_ar: string; name_en: string; name_sw: string
+  sort_order: number
+}
+
+export type MenuTemplateDish = {
+  id: string; template_id: string
+  recipe_id: string | null
+  dish_name: string
+  category: string
+  plate_count: number
+  sort_order: number
+}
+
+export type MenuTemplateFull = MenuTemplate & {
+  menu_template_dishes: MenuTemplateDish[]
+}
+
 export type Role = 'admin' | 'manager' | 'staff' | 'viewer'
 
 export function canDo(role: Role, action:
-  'editInventory' | 'recordTxn' | 'editRecipe' | 'manageCategories' | 'editAssets' | 'editEvents'): boolean {
+  'editInventory' | 'recordTxn' | 'editRecipe' | 'manageCategories' | 'editAssets' | 'editEvents' | 'manageMenuTemplates'): boolean {
   const map: Record<string, Role[]> = {
     editInventory: ['admin', 'manager'],
     recordTxn: ['admin', 'manager', 'staff'],
@@ -165,6 +184,7 @@ export function canDo(role: Role, action:
     manageCategories: ['admin', 'manager'],
     editAssets: ['admin', 'manager'],
     editEvents: ['admin', 'manager', 'staff'],
+    manageMenuTemplates: ['admin', 'manager'],
   }
   return (map[action] || []).includes(role)
 }

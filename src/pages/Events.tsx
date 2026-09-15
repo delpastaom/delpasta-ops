@@ -3,7 +3,8 @@ import { Plus, Edit2, Trash2, Printer, X as XIcon, Users } from 'lucide-react'
 import { useI18n, pickField, type TKey } from '@/lib/i18n'
 import { useRole } from '@/lib/role'
 import { canDo, type BuffetEvent, type BuffetEventFull, type BuffetEventDish, type BuffetEventEquipment, type AssetItem, type Recipe } from '@/lib/types'
-import { listEvents, getEvent, saveEvent, deleteEvent, listAssets, listRecipes, logAudit, type EventSaveInput } from '@/lib/db'
+import { listEvents, getEvent, saveEvent, deleteEvent, listAssets, listRecipes, listMenuTemplates, getMenuTemplate, logAudit, type EventSaveInput } from '@/lib/db'
+import type { MenuTemplate } from '@/lib/types'
 import { printEventSheet } from '@/lib/print'
 import { Button, Card, Drawer, Modal, Field, Input, Select, Textarea, EmptyState } from '@/components/ui'
 
@@ -29,6 +30,7 @@ export default function Events() {
   const [events, setEvents] = useState<BuffetEvent[]>([])
   const [assets, setAssets] = useState<AssetItem[]>([])
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [templates, setTemplates] = useState<MenuTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [detailId, setDetailId] = useState<string | null>(null)
   const [detail, setDetail] = useState<BuffetEventFull | null>(null)
@@ -37,8 +39,8 @@ export default function Events() {
 
   const load = useCallback(() => {
     setLoading(true)
-    Promise.all([listEvents(), listAssets(), listRecipes()])
-      .then(([e, a, r]) => { setEvents(e); setAssets(a); setRecipes(r) })
+    Promise.all([listEvents(), listAssets(), listRecipes(), listMenuTemplates()])
+      .then(([e, a, r, m]) => { setEvents(e); setAssets(a); setRecipes(r); setTemplates(m) })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
@@ -154,6 +156,7 @@ export default function Events() {
             setDraft={setEditing}
             assets={assets}
             recipes={recipes}
+            templates={templates}
             t={t}
             lang={lang}
             onCancel={() => setEditing(null)}
@@ -165,12 +168,20 @@ export default function Events() {
   )
 }
 
-function EventForm({ draft, setDraft, assets, recipes, t, lang, onCancel, onSave }: {
-  draft: Draft; setDraft: (d: Draft) => void; assets: AssetItem[]; recipes: Recipe[]
+function EventForm({ draft, setDraft, assets, recipes, templates, t, lang, onCancel, onSave }: {
+  draft: Draft; setDraft: (d: Draft) => void; assets: AssetItem[]; recipes: Recipe[]; templates: MenuTemplate[]
   t: (k: TKey) => string; lang: 'ar' | 'en' | 'sw'; onCancel: () => void; onSave: () => void
 }) {
   const upd = (patch: Partial<Draft>) => setDraft({ ...draft, ...patch })
   const guestCount = draft.guest_count ?? 0
+
+  const loadTemplate = async (id: string) => {
+    if (!id) return
+    const tpl = await getMenuTemplate(id)
+    if (!tpl) return
+    const added = tpl.menu_template_dishes.map(({ recipe_id, dish_name, category, plate_count }) => ({ recipe_id, dish_name, category, plate_count, notes: '', sort_order: 0 }))
+    upd({ dishes: [...draft.dishes, ...added] })
+  }
 
   const addDish = () => upd({ dishes: [...draft.dishes, { recipe_id: null, dish_name: '', category: '', plate_count: 0, notes: '', sort_order: 0 }] })
   const rmDish = (i: number) => upd({ dishes: draft.dishes.filter((_, idx) => idx !== i) })
@@ -196,6 +207,14 @@ function EventForm({ draft, setDraft, assets, recipes, t, lang, onCancel, onSave
         <Input type="number" min={0} value={guestCount} onChange={(e) => setGuestCount(parseFloat(e.target.value) || 0)} />
       </Field>
 
+      {templates.length > 0 && (
+        <Field label={t('loadTemplate')}>
+          <Select value="" onChange={(e) => loadTemplate(e.target.value)}>
+            <option value="">—</option>
+            {templates.map((tpl) => <option key={tpl.id} value={tpl.id}>{pickField(tpl, 'name', lang)}</option>)}
+          </Select>
+        </Field>
+      )}
       <Field label={t('dishes')}>
         {draft.dishes.map((d, i) => (
           <Card key={i} className="p-2.5 mb-2">

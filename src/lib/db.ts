@@ -3,6 +3,7 @@ import type {
   Category, InventoryItem, InventoryTransaction, Recipe, RecipeFull,
   RecipeEquipment, RecipeIngredient, RecipeStep, RecipeQcCheckpoint, TxnType, AssetItem,
   BuffetEvent, BuffetEventFull, BuffetEventDish, BuffetEventEquipment,
+  MenuTemplate, MenuTemplateFull, MenuTemplateDish,
 } from './types'
 
 function sb() {
@@ -222,6 +223,47 @@ export async function saveEvent(input: EventSaveInput): Promise<string> {
 
 export async function deleteEvent(id: string) {
   const { error } = await sb().from('buffet_events').delete().eq('id', id)
+  if (error) throw error
+}
+
+// ============================= Menu templates =============================
+export async function listMenuTemplates(): Promise<MenuTemplate[]> {
+  const { data, error } = await sb().from('menu_templates').select('*').order('sort_order')
+  if (error) throw error
+  return data as MenuTemplate[]
+}
+export async function getMenuTemplate(id: string): Promise<MenuTemplateFull | null> {
+  const { data, error } = await sb().from('menu_templates').select('*, menu_template_dishes(*)').eq('id', id).maybeSingle()
+  if (error) throw error
+  if (!data) return null
+  const tpl = data as unknown as MenuTemplateFull
+  tpl.menu_template_dishes.sort((a, b) => a.sort_order - b.sort_order)
+  return tpl
+}
+
+export type MenuTemplateSaveInput = Partial<MenuTemplate> & {
+  id: string
+  dishes: Omit<MenuTemplateDish, 'id' | 'template_id'>[]
+}
+
+export async function saveMenuTemplate(input: MenuTemplateSaveInput, isNew: boolean) {
+  const { dishes, ...fields } = input
+  const client = sb()
+  if (isNew) {
+    const { error } = await client.from('menu_templates').insert(fields)
+    if (error) throw error
+  } else {
+    const { error } = await client.from('menu_templates').update(fields).eq('id', input.id)
+    if (error) throw error
+  }
+  await client.from('menu_template_dishes').delete().eq('template_id', input.id)
+  if (dishes.length) {
+    const { error } = await client.from('menu_template_dishes').insert(dishes.map((d, i) => ({ ...d, template_id: input.id, sort_order: i })))
+    if (error) throw error
+  }
+}
+export async function deleteMenuTemplate(id: string) {
+  const { error } = await sb().from('menu_templates').delete().eq('id', id)
   if (error) throw error
 }
 
