@@ -1,7 +1,7 @@
 import { getSupabase } from './supabase'
 import type {
   Category, InventoryItem, InventoryTransaction, Recipe, RecipeFull,
-  RecipeEquipment, RecipeIngredient, RecipeStep, RecipeQcCheckpoint, TxnType,
+  RecipeEquipment, RecipeIngredient, RecipeStep, RecipeQcCheckpoint, TxnType, AssetItem,
 } from './types'
 
 function sb() {
@@ -144,6 +144,26 @@ export async function uploadPhoto(file: File, folder: string): Promise<string> {
   if (error) throw error
   const { data } = client.storage.from('photos').getPublicUrl(path)
   return data.publicUrl
+}
+
+// ============================= Buffet assets =============================
+export async function listAssets(): Promise<AssetItem[]> {
+  const { data, error } = await sb().from('asset_items').select('*').order('name_en')
+  if (error) throw error
+  return data as AssetItem[]
+}
+export async function addAsset(item: Partial<AssetItem>) {
+  const { data, error } = await sb().from('asset_items').insert(item).select().single()
+  if (error) throw error
+  return data as AssetItem
+}
+export async function updateAsset(id: string, item: Partial<AssetItem>) {
+  const { error } = await sb().from('asset_items').update(item).eq('id', id)
+  if (error) throw error
+}
+export async function deleteAsset(id: string) {
+  const { error } = await sb().from('asset_items').delete().eq('id', id)
+  if (error) throw error
 }
 
 // ============================= Settings (admin PIN) =============================

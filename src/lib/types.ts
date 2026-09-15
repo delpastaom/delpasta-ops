@@ -101,15 +101,36 @@ export type RecipeFull = Recipe & {
   recipe_qc_checkpoints: RecipeQcCheckpoint[]
 }
 
+export type AssetCondition = 'new' | 'excellent' | 'good' | 'usable' | 'damaged' | 'needs_repair' | 'unusable'
+
+export type AssetItem = {
+  id: string
+  name_ar: string; name_en: string; name_sw: string
+  category_id: string | null
+  material: string
+  size_type: string
+  total_qty: number
+  available_qty: number
+  damaged_qty: number
+  missing_qty: number
+  condition: AssetCondition
+  storage_location_ar: string; storage_location_en: string; storage_location_sw: string
+  notes: string
+  photo_url: string | null
+  active: boolean
+  created_at: string
+}
+
 export type Role = 'admin' | 'manager' | 'staff' | 'viewer'
 
 export function canDo(role: Role, action:
-  'editInventory' | 'recordTxn' | 'editRecipe' | 'manageCategories'): boolean {
+  'editInventory' | 'recordTxn' | 'editRecipe' | 'manageCategories' | 'editAssets'): boolean {
   const map: Record<string, Role[]> = {
     editInventory: ['admin', 'manager'],
     recordTxn: ['admin', 'manager', 'staff'],
     editRecipe: ['admin', 'manager'],
     manageCategories: ['admin', 'manager'],
+    editAssets: ['admin', 'manager'],
   }
   return (map[action] || []).includes(role)
 }

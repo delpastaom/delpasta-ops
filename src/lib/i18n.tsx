@@ -35,6 +35,10 @@ const dict = {
     newPin: 'New PIN', currentPin: 'Current PIN', pinChanged: 'PIN updated.',
     printCountSheet: 'Print count sheet', checkedBy: 'Checked by', pickCategoryFirst: 'Choose a specific category above first.',
     countSheetHint: 'Write the counted quantity in each date column by hand — no need to reprint between checks.',
+    nav_assets: 'Buffet Equipment', newAsset: 'New equipment item', material: 'Material', sizeType: 'Size / type',
+    totalOwned: 'Total owned', available: 'Available', damagedQty: 'Damaged', missingQty: 'Missing', condition: 'Condition',
+    cond_new: 'New', cond_excellent: 'Excellent', cond_good: 'Good', cond_usable: 'Usable', cond_damaged: 'Damaged',
+    cond_needs_repair: 'Needs repair', cond_unusable: 'Unusable', noAssetsYet: 'No buffet equipment yet.',
   },
   ar: {
     appName: 'دل باستا', appSub: 'العمليات والمخزون',
@@ -67,6 +71,10 @@ const dict = {
     newPin: 'الرمز الجديد', currentPin: 'الرمز الحالي', pinChanged: 'تم تحديث الرمز.',
     printCountSheet: 'طباعة ورقة الجرد', checkedBy: 'تم الفحص بواسطة', pickCategoryFirst: 'اختاري فئة محددة فوق أولاً.',
     countSheetHint: 'اكتبي الكمية المعدودة يدويًا في كل عمود تاريخ — بدون حاجة لإعادة الطباعة بين كل فحص.',
+    nav_assets: 'معدات البوفيه', newAsset: 'معدة جديدة', material: 'الخامة', sizeType: 'الحجم / النوع',
+    totalOwned: 'الإجمالي المملوك', available: 'المتاح', damagedQty: 'تالف', missingQty: 'مفقود', condition: 'الحالة',
+    cond_new: 'جديد', cond_excellent: 'ممتاز', cond_good: 'جيد', cond_usable: 'قابل للاستخدام', cond_damaged: 'تالف',
+    cond_needs_repair: 'يحتاج إصلاح', cond_unusable: 'غير صالح', noAssetsYet: 'لا توجد معدات بوفيه بعد.',
   },
   sw: {
     appName: 'Del Pasta', appSub: 'Uendeshaji na Hesabu',
@@ -99,6 +107,10 @@ const dict = {
     newPin: 'PIN mpya', currentPin: 'PIN ya sasa', pinChanged: 'PIN imesasishwa.',
     printCountSheet: 'Chapisha karatasi ya hesabu', checkedBy: 'Imekaguliwa na', pickCategoryFirst: 'Chagua aina mahususi juu kwanza.',
     countSheetHint: 'Andika kiasi kilichohesabiwa kwa mkono kwenye kila safu ya tarehe — hauitaji kuchapisha upya kila ukaguzi.',
+    nav_assets: 'Vifaa vya Tafrija', newAsset: 'Kifaa kipya', material: 'Nyenzo', sizeType: 'Ukubwa / Aina',
+    totalOwned: 'Jumla inayomilikiwa', available: 'Ipo', damagedQty: 'Imeharibika', missingQty: 'Imepotea', condition: 'Hali',
+    cond_new: 'Mpya', cond_excellent: 'Bora sana', cond_good: 'Nzuri', cond_usable: 'Inatumika', cond_damaged: 'Imeharibika',
+    cond_needs_repair: 'Inahitaji ukarabati', cond_unusable: 'Haitumiki', noAssetsYet: 'Hakuna vifaa vya tafrija bado.',
   },
 } as const
 
