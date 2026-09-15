@@ -233,8 +233,9 @@ function CategoryForm({ onDone, onCancel, t }: { onDone: () => void; onCancel: (
   const [saving, setSaving] = useState(false)
 
   const submit = async () => {
-    const id = (name.en || name.ar || name.sw).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-    if (!id) return
+    const slug = (name.en || name.ar || name.sw).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    if (!name.en && !name.ar && !name.sw) return
+    const id = slug || crypto.randomUUID().slice(0, 8)
     setSaving(true)
     try {
       await addCategory({ id, name_ar: name.ar, name_en: name.en, name_sw: name.sw, kind })

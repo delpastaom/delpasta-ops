@@ -3,7 +3,7 @@ import { Plus, Edit2, Trash2 } from 'lucide-react'
 import { useI18n, pickField, type Lang } from '@/lib/i18n'
 import { useRole } from '@/lib/role'
 import { canDo, type AssetItem, type Category, type AssetCondition } from '@/lib/types'
-import { listAssets, listCategories, addAsset, updateAsset, deleteAsset, logAudit } from '@/lib/db'
+import { listAssets, listCategories, addAsset, updateAsset, deleteAsset, addCategory, logAudit } from '@/lib/db'
 import { fmt1 } from '@/lib/status'
 import { Button, Card, Drawer, Modal, Field, Input, Select, Textarea, Pill, EmptyState } from '@/components/ui'
 import LangTabs from '@/components/LangTabs'
@@ -34,6 +34,8 @@ export default function Assets() {
   const [editing, setEditing] = useState<Partial<AssetItem> | null>(null)
   const [langTab, setLangTab] = useState<Lang>('en')
   const [catFilter, setCatFilter] = useState('all')
+  const [addingCat, setAddingCat] = useState(false)
+  const [newCatName, setNewCatName] = useState('')
 
   const load = useCallback(() => {
     setLoading(true)
@@ -75,6 +77,18 @@ export default function Assets() {
     await deleteAsset(id)
     setDetail(null); setEditing(null)
     load()
+  }
+
+  const quickAddCategory = async () => {
+    const name = newCatName.trim()
+    if (!name) return
+    const slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    const id = 'asset-' + (slug || crypto.randomUUID().slice(0, 8))
+    await addCategory({ id, name_ar: name, name_en: name, name_sw: name, kind: 'asset' })
+    setNewCatName(''); setAddingCat(false)
+    const fresh = await listCategories()
+    setCats(fresh)
+    if (editing) setEditing({ ...editing, category_id: id })
   }
 
   const assetCats = cats.filter((c) => c.kind === 'asset')
@@ -149,10 +163,21 @@ export default function Assets() {
             <PhotoUpload folder="assets" url={editing.photo_url} onChange={(url) => setEditing({ ...editing, photo_url: url })} />
             <div className="grid grid-cols-2 gap-3">
               <Field label={t('category')}>
-                <Select value={editing.category_id || ''} onChange={(e) => setEditing({ ...editing, category_id: e.target.value })}>
-                  <option value="">—</option>
-                  {assetCats.map((c) => <option key={c.id} value={c.id}>{pickField(c, 'name', lang)}</option>)}
-                </Select>
+                {!addingCat ? (
+                  <div className="flex gap-1.5">
+                    <Select value={editing.category_id || ''} onChange={(e) => setEditing({ ...editing, category_id: e.target.value })}>
+                      <option value="">—</option>
+                      {assetCats.map((c) => <option key={c.id} value={c.id}>{pickField(c, 'name', lang)}</option>)}
+                    </Select>
+                    <Button type="button" size="sm" onClick={() => setAddingCat(true)}><Plus size={14} /></Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-1.5">
+                    <Input autoFocus value={newCatName} onChange={(e) => setNewCatName(e.target.value)} placeholder={t('newCategory')} />
+                    <Button type="button" size="sm" variant="primary" onClick={quickAddCategory}>{t('add')}</Button>
+                    <Button type="button" size="sm" onClick={() => { setAddingCat(false); setNewCatName('') }}>{t('cancel')}</Button>
+                  </div>
+                )}
               </Field>
               <Field label={t('condition')}>
                 <Select value={editing.condition || 'good'} onChange={(e) => setEditing({ ...editing, condition: e.target.value as AssetCondition })}>

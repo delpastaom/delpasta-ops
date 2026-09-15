@@ -174,13 +174,11 @@ function EventForm({ draft, setDraft, assets, recipes, templates, t, lang, onCan
 }) {
   const upd = (patch: Partial<Draft>) => setDraft({ ...draft, ...patch })
   const guestCount = draft.guest_count ?? 0
+  const [pickerOpen, setPickerOpen] = useState(false)
 
-  const loadTemplate = async (id: string) => {
-    if (!id) return
-    const tpl = await getMenuTemplate(id)
-    if (!tpl) return
-    const added = tpl.menu_template_dishes.map(({ recipe_id, dish_name, category, plate_count }) => ({ recipe_id, dish_name, category, plate_count, notes: '', sort_order: 0 }))
-    upd({ dishes: [...draft.dishes, ...added] })
+  const addChosenDishes = (chosen: Omit<BuffetEventDish, 'id' | 'event_id'>[]) => {
+    upd({ dishes: [...draft.dishes, ...chosen] })
+    setPickerOpen(false)
   }
 
   const addDish = () => upd({ dishes: [...draft.dishes, { recipe_id: null, dish_name: '', category: '', plate_count: 0, notes: '', sort_order: 0 }] })
@@ -207,41 +205,20 @@ function EventForm({ draft, setDraft, assets, recipes, templates, t, lang, onCan
         <Input type="number" min={0} value={guestCount} onChange={(e) => setGuestCount(parseFloat(e.target.value) || 0)} />
       </Field>
 
-      {templates.length > 0 && (
-        <Field label={t('loadTemplate')}>
-          <Select value="" onChange={(e) => loadTemplate(e.target.value)}>
-            <option value="">—</option>
-            {templates.map((tpl) => <option key={tpl.id} value={tpl.id}>{pickField(tpl, 'name', lang)}</option>)}
-          </Select>
-        </Field>
-      )}
       <Field label={t('dishes')}>
         {draft.dishes.map((d, i) => (
-          <Card key={i} className="p-2.5 mb-2">
-            <div className="grid grid-cols-2 gap-2 mb-1.5">
-              <Select
-                value={d.recipe_id || ''}
-                onChange={(e) => {
-                  const r = recipes.find((x) => x.id === e.target.value)
-                  setDish(i, { recipe_id: e.target.value || null, dish_name: r ? pickField(r, 'name', lang) : d.dish_name, category: r?.category || d.category })
-                }}
-              >
-                <option value="">{t('pickRecipeOptional')}</option>
-                {recipes.map((r) => <option key={r.id} value={r.id}>{pickField(r, 'name', lang)}</option>)}
-              </Select>
-              <Input placeholder={t('dishName')} value={d.dish_name} onChange={(e) => setDish(i, { dish_name: e.target.value })} />
-            </div>
-            <div className="grid grid-cols-2 gap-2 mb-1.5">
-              <Input placeholder={t('dishCategory')} value={d.category} onChange={(e) => setDish(i, { category: e.target.value })} />
-              <Input type="number" placeholder={t('plateCount')} value={d.plate_count} onChange={(e) => setDish(i, { plate_count: parseFloat(e.target.value) || 0 })} />
-            </div>
-            <div className="flex gap-2">
-              <Input placeholder={t('notes')} value={d.notes} onChange={(e) => setDish(i, { notes: e.target.value })} />
-              <Button variant="danger" size="sm" onClick={() => rmDish(i)}><XIcon size={14} /></Button>
-            </div>
-          </Card>
+          <div key={i} className="flex flex-wrap items-center gap-1.5 mb-1.5">
+            <Input className="flex-[2] min-w-[120px]" placeholder={t('dishName')} value={d.dish_name} onChange={(e) => setDish(i, { dish_name: e.target.value })} />
+            <Input className="flex-1 min-w-[90px]" placeholder={t('dishCategory')} value={d.category} onChange={(e) => setDish(i, { category: e.target.value })} />
+            <Input className="w-16" type="number" placeholder={t('plateCount')} value={d.plate_count} onChange={(e) => setDish(i, { plate_count: parseFloat(e.target.value) || 0 })} />
+            <Input className="flex-1 min-w-[100px]" placeholder={t('notes')} value={d.notes} onChange={(e) => setDish(i, { notes: e.target.value })} />
+            <Button variant="danger" size="sm" onClick={() => rmDish(i)}><XIcon size={14} /></Button>
+          </div>
         ))}
-        <Button size="sm" onClick={addDish}><Plus size={14} /> {t('addDish')}</Button>
+        <div className="flex gap-2 mt-1.5">
+          <Button size="sm" onClick={addDish}><Plus size={14} /> {t('addDish')}</Button>
+          {templates.length > 0 && <Button size="sm" onClick={() => setPickerOpen(true)}>{t('loadTemplate')}</Button>}
+        </div>
       </Field>
 
       <Field label={t('nav_assets')}>
@@ -295,6 +272,79 @@ function EventForm({ draft, setDraft, assets, recipes, templates, t, lang, onCan
       <div className="flex justify-end gap-2 mt-4">
         <Button onClick={onCancel}>{t('cancel')}</Button>
         <Button variant="primary" onClick={onSave}>{t('save')}</Button>
+      </div>
+
+      <Modal open={pickerOpen} onClose={() => setPickerOpen(false)} title={t('loadTemplate')} wide>
+        <TemplatePicker templates={templates} t={t} lang={lang} onAdd={addChosenDishes} onCancel={() => setPickerOpen(false)} />
+      </Modal>
+    </div>
+  )
+}
+
+function TemplatePicker({ templates, t, lang, onAdd, onCancel }: {
+  templates: MenuTemplate[]; t: (k: TKey) => string; lang: 'ar' | 'en' | 'sw'
+  onAdd: (chosen: Omit<BuffetEventDish, 'id' | 'event_id'>[]) => void; onCancel: () => void
+}) {
+  const [templateId, setTemplateId] = useState('')
+  const [tpl, setTpl] = useState<Awaited<ReturnType<typeof getMenuTemplate>>>(null)
+  const [picked, setPicked] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    if (!templateId) { setTpl(null); return }
+    getMenuTemplate(templateId).then((t) => { setTpl(t); setPicked({}) })
+  }, [templateId])
+
+  const groups = new Map<string, NonNullable<typeof tpl>['menu_template_dishes']>()
+  for (const d of tpl?.menu_template_dishes || []) {
+    if (!groups.has(d.category)) groups.set(d.category, [])
+    groups.get(d.category)!.push(d)
+  }
+
+  const toggle = (id: string, on: boolean) => {
+    setPicked((p) => { const n = { ...p }; if (on) n[id] = n[id] ?? 0; else delete n[id]; return n })
+  }
+
+  const submit = () => {
+    if (!tpl) return
+    const chosen = tpl.menu_template_dishes
+      .filter((d) => d.id in picked)
+      .map((d) => ({ recipe_id: d.recipe_id, dish_name: d.dish_name, category: d.category, plate_count: picked[d.id] || 0, notes: '', sort_order: 0 }))
+    onAdd(chosen)
+  }
+
+  return (
+    <div>
+      <Field label={t('menuTemplates')}>
+        <Select value={templateId} onChange={(e) => setTemplateId(e.target.value)}>
+          <option value="">—</option>
+          {templates.map((t2) => <option key={t2.id} value={t2.id}>{pickField(t2, 'name', lang)}</option>)}
+        </Select>
+      </Field>
+
+      {tpl && [...groups.entries()].map(([cat, dishes]) => (
+        <div key={cat} className="mb-3">
+          <div className="text-xs font-bold text-muted-foreground mb-1.5">{cat || '—'}</div>
+          <div className="space-y-1">
+            {dishes.map((d) => (
+              <div key={d.id} className="flex items-center gap-2 bg-muted/50 rounded-lg px-2.5 py-1.5">
+                <input type="checkbox" checked={d.id in picked} onChange={(e) => toggle(d.id, e.target.checked)} />
+                <span className="flex-1 text-sm">{d.dish_name}</span>
+                {d.id in picked && (
+                  <Input
+                    type="number" className="w-16" placeholder={t('plateCount')}
+                    value={picked[d.id]}
+                    onChange={(e) => setPicked((p) => ({ ...p, [d.id]: parseFloat(e.target.value) || 0 }))}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div className="flex justify-end gap-2 mt-4">
+        <Button onClick={onCancel}>{t('cancel')}</Button>
+        <Button variant="primary" disabled={!tpl || Object.keys(picked).length === 0} onClick={submit}>{t('add')}</Button>
       </div>
     </div>
   )
