@@ -10,7 +10,7 @@ import { isSupabaseConfigured } from '@/lib/supabase'
 const NAV = [
   { to: '/', icon: LayoutDashboard, label: 'nav_dashboard' as const, end: true },
   { to: '/inventory', icon: Package, label: 'nav_inventory' as const },
-  { to: '/assets', icon: UtensilsCrossed, label: 'nav_assets' as const },
+  { to: '/equipment', icon: UtensilsCrossed, label: 'nav_assets' as const },
   { to: '/recipes', icon: BookOpen, label: 'nav_recipes' as const },
   { to: '/events', icon: PartyPopper, label: 'nav_events' as const },
   { to: '/reports', icon: BarChart3, label: 'nav_reports' as const },

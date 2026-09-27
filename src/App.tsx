@@ -34,7 +34,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/inventory" element={<Inventory />} />
-        <Route path="/assets" element={<Assets />} />
+        <Route path="/equipment" element={<Assets />} />
         <Route path="/events" element={<Events />} />
         <Route path="/recipes" element={<Recipes />} />
         <Route path="/reports" element={<Reports />} />
